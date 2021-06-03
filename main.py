@@ -1,10 +1,21 @@
 import streamlit as st
 from model.model import Pipeline
-from spectrum_plotter import get_plots
+from spectrum_plotter import plot_bokeh_graph
 from state_manager import reset_current_file, get_next_file, get_previous_file
 from file_processor import extract_spectra_from_files
 
 st.title('GalacTech')
+home = st.sidebar.button('Dashboard')
+how_to_use = st.sidebar.button('How to use')
+files = st.sidebar.file_uploader("Choose a file", accept_multiple_files=True)
+
+if how_to_use:
+    st.header('How To Use')
+    st.text('1. Acquire spectra of astronomical entities in FITS or CSV format.')
+    st.text('2. Upload the files one by one or all at once.')
+    st.text('3. View the results and play around with the interactive charts.')
+    st.text('4. Download results as a CSV.')
+    st.stop()
 
 @st.cache(hash_funcs={Pipeline: lambda _: ''})
 def load_pipeline():
@@ -21,37 +32,41 @@ def get_predictions(filenames, spectra):
 def reset_state_if_new_uploads(files):
     reset_current_file(len(files))
 
-files = st.sidebar.file_uploader("Choose a file", accept_multiple_files=True)
-
 filenames = list(map(lambda file: file.name, files))
-
 reset_state_if_new_uploads(files)
 
-if files:
+if not files:
+    st.stop()
 
-    spectra = extract_spectra_from_files(files)
+spectra = extract_spectra_from_files(files)
+predictions, dataframe, csv = get_predictions(filenames, spectra)
 
-    plots = get_plots(spectra)
+col1, col2, col3 = st.beta_columns([0.55, 1, 0.2])
 
-    predictions, dataframe = get_predictions(filenames, spectra)
+index = 0
 
-    col1, col2, col3 = st.beta_columns([0.55, 1, 0.55])
+if col1.button('Previous'):
+    index = get_previous_file()
 
-    index = 0
-    
-    if col1.button('Previous'):
+if col3.button('Next'):
+    index = get_next_file()
 
-        index = get_previous_file()
+col2.subheader(files[index].name)
 
-    if col3.button('Next'):
+st.bokeh_chart(plot_bokeh_graph(spectra[index]), use_container_width=True)
 
-        index = get_next_file()
+_, col2, _ = st.beta_columns([1.2, 1, 0.4])
+col2.header(predictions['entity'][index])
 
-    col2.subheader(files[index].name)
+if predictions['entity'][index] == 'QSO':
+    st.warning('Our QSO classifer is a bit flimsy.')
 
-    st.write(plots[index])
+if predictions['entity'][index] == 'Galaxy':
+    col1, _, col3 = st.beta_columns([1, 0.8, 0.6])
+    col1.subheader(f'Age: {predictions["age"][index]}')
+    col3.subheader(f'Metallicity: {predictions["metallicity"][index]}')
 
-    st.dataframe(dataframe)
+st.table(dataframe)
 
-    # if spectra:
-    #     st.text(spectra)
+href = f'<a href="data:file/csv;base64,{csv}" download="results.csv" target="_blank">Download as CSV</a>'
+st.markdown(href, unsafe_allow_html=True)

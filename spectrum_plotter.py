@@ -3,22 +3,7 @@ from bokeh.embed.standalone import components
 from bokeh.plotting import figure, output_file
 
 
-def get_plots(spectra):
-    # plots = {'scripts': [], 'divs': []}
-    plots = []
-
-    for spectrum in spectra:
-        plot = plot_bokeh_graph(pd.Series(spectrum['wavelength']), pd.Series(spectrum['flux']))
-        plots.append(plot)
-
-        # script, div = plot_bokeh_graph(pd.Series(spectrum['wavelength']), pd.Series(spectrum['flux']))
-        # plots['scripts'].append(script)
-        # plots['divs'].append(div)
-
-    return plots
-
-
-def plot_bokeh_graph(x, y):
+def plot_bokeh_graph(spectrum):
     '''
     This function is used to plot an interactive graph using Bokeh
     Parameters:
@@ -31,15 +16,17 @@ def plot_bokeh_graph(x, y):
     # Output to a static HTML file
     output_file('lines.html')
 
+    x, y = pd.Series(spectrum['wavelength']), pd.Series(spectrum['flux'])
+
     # Create a new plot with a title and axis labels
     plot = figure(title='Spectra', x_axis_label='Wavelength',
-                    y_axis_label='Flux', plot_height=400, plot_width=400)
+                    y_axis_label='Flux', plot_height=600, plot_width=680)
 
     # Add a line renderer with legend and line thickness
     plot.line(x, y, line_width=1)
 
     return plot
 
-    script, div = components(plot)
+    # script, div = components(plot)
 
-    return script, div
+    # return script, div

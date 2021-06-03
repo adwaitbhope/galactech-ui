@@ -1,3 +1,4 @@
+import base64
 import numpy as np
 import pandas as pd
 from .classifiers import EntityClassifier
@@ -43,7 +44,9 @@ class Pipeline:
         predictions['age'] = ['500 million years'] * len(X)
         predictions['metallicity'] = ['0.59'] * len(X)
 
-        return predictions, self._get_dataframe(filenames, predictions)
+        dataframe, csv = self._get_dataframe(filenames, predictions)
+
+        return predictions, dataframe, csv
 
     def _prepare_data(self, wavelength, flux):
         X = resample(wavelength, flux)
@@ -55,4 +58,7 @@ class Pipeline:
         dataframe['Entity'] = predictions['entity']
         dataframe['Age'] = predictions['age']
         dataframe['Metallicity'] = predictions['metallicity']
-        return dataframe
+
+        csv = dataframe.to_csv(index=False).encode()
+
+        return dataframe, base64.b64encode(csv).decode()
