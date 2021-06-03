@@ -1,0 +1,39 @@
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+
+# Python # 
+*.py[cod] 
+*$py.class 
+*Django AdminPanel Details
+
+# # Models
+# **/models/*
+
+# pyenv 
+.python-version 
+
+# Environments
+
+.env 
+.venv
+env/ 
+venv/ 
+ENV/ 
+env.bak/
+venv.bak/
+*.idea/
+galactechenv/
+
+
+# Visual Studio Code # 
+.vscode/* 
+!.vscode/settings.json 
+!.vscode/tasks.json 
+!.vscode/launch.json 
+!.vscode/extensions.json 
+.history
