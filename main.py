@@ -1,12 +1,6 @@
 import os
 import site
 import shutil
-import streamlit as st
-from model.model import Pipeline
-from bokeh.themes import built_in_themes
-from spectrum_plotter import plot_bokeh_graph
-from file_processor import extract_spectra_from_files
-from state_manager import reset_current_file, get_next_file, get_previous_file
 
 @st.cache
 def fix_bokeh_dark_mode():
@@ -16,6 +10,13 @@ def fix_bokeh_dark_mode():
     shutil.copy(BOKEH_SOURCE, BOKEH_DEST)
 
 fix_bokeh_dark_mode()
+
+import streamlit as st
+from model.model import Pipeline
+from bokeh.themes import built_in_themes
+from spectrum_plotter import plot_bokeh_graph
+from file_processor import extract_spectra_from_files
+from state_manager import reset_current_file, get_next_file, get_previous_file
 
 st.title('GalacTech')
 home = st.sidebar.button('Dashboard')
