@@ -2,7 +2,6 @@ import os
 import site
 import shutil
 
-@st.cache
 def fix_bokeh_dark_mode():
     SITE_PACKAGES_DIR = site.getsitepackages()[0]
     BOKEH_SOURCE = 'bokeh_chart.py'
