@@ -1,6 +1,5 @@
 import pandas as pd
-from bokeh.embed.standalone import components
-from bokeh.plotting import figure, output_file
+from bokeh.plotting import figure
 
 
 def plot_bokeh_graph(spectrum):
@@ -13,8 +12,6 @@ def plot_bokeh_graph(spectrum):
         script: A string which can be placed into the HTML file directly as a part of the header scripts
         div: A string which represents a div element to be placed directly in the body of the HTML file
     '''
-    # Output to a static HTML file
-    output_file('lines.html')
 
     x, y = pd.Series(spectrum['wavelength']), pd.Series(spectrum['flux'])
 
@@ -26,7 +23,3 @@ def plot_bokeh_graph(spectrum):
     plot.line(x, y, line_width=1)
 
     return plot
-
-    # script, div = components(plot)
-
-    # return script, div

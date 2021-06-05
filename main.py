@@ -1,8 +1,21 @@
+import os
+import site
+import shutil
 import streamlit as st
 from model.model import Pipeline
+from bokeh.themes import built_in_themes
 from spectrum_plotter import plot_bokeh_graph
-from state_manager import reset_current_file, get_next_file, get_previous_file
 from file_processor import extract_spectra_from_files
+from state_manager import reset_current_file, get_next_file, get_previous_file
+
+@st.cache
+def fix_bokeh_dark_mode():
+    SITE_PACKAGES_DIR = site.getsitepackages()[0]
+    BOKEH_SOURCE = 'bokeh_chart.py'
+    BOKEH_DEST = os.path.join(SITE_PACKAGES_DIR, 'streamlit', 'elements', 'bokeh_chart.py')
+    shutil.copy(BOKEH_SOURCE, BOKEH_DEST)
+
+fix_bokeh_dark_mode()
 
 st.title('GalacTech')
 home = st.sidebar.button('Dashboard')
@@ -53,7 +66,7 @@ if col3.button('Next'):
 
 col2.subheader(files[index].name)
 
-st.bokeh_chart(plot_bokeh_graph(spectra[index]), use_container_width=True)
+st.bokeh_chart(plot_bokeh_graph(spectra[index]), use_container_width=True, theme=built_in_themes['dark_minimal'])
 
 _, col2, _ = st.beta_columns([1.2, 1, 0.4])
 col2.header(predictions['entity'][index])

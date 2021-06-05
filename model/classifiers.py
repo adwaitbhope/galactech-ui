@@ -22,5 +22,4 @@ class EntityClassifier:
 
     def _prepare_data(self, X):
         X = np.expand_dims(X, axis=-1)
-        # X = self.scaler.transform(X)
         return X
